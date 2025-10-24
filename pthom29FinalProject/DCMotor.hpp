@@ -10,13 +10,15 @@
 namespace arduino {
 	class DCMotor {
 	private:
-		AnalogPin analogPin;
+		AnalogPin speedPin;
+
+    
 
 	public:
 		/* ----------------------------------------------Constructors----------------------------------------------- */
-		DCMotor(const AnalogPin& analogPin) noexcept;
+		DCMotor(const AnalogPin& speedPin) noexcept;
 
-		DCMotor(AnalogPin&& analogPin) noexcept;
+		DCMotor(AnalogPin&& speedPin) noexcept;
 
 		DCMotor(const DCMotor&) noexcept = default;
 
@@ -31,14 +33,18 @@ namespace arduino {
 		DCMotor& operator=(DCMotor&&) noexcept = default;
 
 		/* ------------------------------------------------Setters-------------------------------------------------- */
-		void setAnalogPin(const AnalogPin& analogPin) noexcept;
+		void setSpeedPin(const AnalogPin& speedPin) noexcept;
 
-		void setAnalogPin(AnalogPin&& analogPin) noexcept;
+		void setSpeedPin(AnalogPin&& speedPin) noexcept;
 
-		void setSpeed(std::uint32_t speed) noexcept;
+    void setSpeedPin(pin_size_t pinNumber) noexcept;
+
+    void setSpeedPin(pin_size_t pinNumber, std::uint8_t speed);
+
+		void setSpeed(std::uint8_t speed) noexcept;
 
 		/* ------------------------------------------------Getters-------------------------------------------------- */
-		[[nodiscard]] std::uint32_t getSpeed(void) const noexcept;
+		[[nodiscard]] std::uint8_t getSpeed(void) const noexcept;
 
 	};
 

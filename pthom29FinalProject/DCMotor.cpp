@@ -4,24 +4,27 @@
 namespace arduino {
 
   /* --------------------------------------------------Constructors----------------------------------------------- */
-  DCMotor::DCMotor(const AnalogPin& analogPin) noexcept : analogPin(analogPin) {}
+  DCMotor::DCMotor(const AnalogPin& speedPin) noexcept : speedPin(speedPin) {}
 
-  DCMotor::DCMotor(AnalogPin&& analogPin) noexcept : analogPin(analogPin) {}
+  DCMotor::DCMotor(AnalogPin&& speedPin) noexcept : speedPin(speedPin) {}
   
   /* ----------------------------------------------------Setters-------------------------------------------------- */
-  void DCMotor::setAnalogPin(const AnalogPin& analogPin) noexcept {this->analogPin = analogPin; }
+  void DCMotor::setSpeedPin(const AnalogPin& speedPin) noexcept {this->speedPin = speedPin; }
 
-  void DCMotor::setAnalogPin(AnalogPin&& analogPin) noexcept { this->analogPin = analogPin; }
+  void DCMotor::setSpeedPin(AnalogPin&& speedPin) noexcept { this->speedPin = speedPin; }
 
-  // TODO
-  void DCMotor::setSpeed(std::uint32_t speed) noexcept {
-    //
+  void DCMotor::setSpeedPin(pin_size_t pinNumber) noexcept { this->speedPin.setNumber(pinNumber); }
+
+  void DCMotor::setSpeedPin(pin_size_t pinNumber, std::uint8_t speed) noexcept {
+    this->speedPin.setNumber(pinNumber);
+    this->speedPin.write(speed);
   }
 
+  void DCMotor::setSpeed(std::uint8_t speed) noexcept { this->speedPin.write(speed); }
+
   /* ----------------------------------------------------Getters-------------------------------------------------- */
-  // TODO
-  [[nodiscard]] std::uint32_t DCMotor::getSpeed(void) const noexcept {
-    return 0;
+  [[nodiscard]] std::uint8_t DCMotor::getSpeed(void) const noexcept {
+    return static_cast<std::uint8_t>(this->speedPin.read());
   }
 
 } // namespace arduino
