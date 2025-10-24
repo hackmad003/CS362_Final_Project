@@ -14,8 +14,6 @@ namespace arduino {
 
 	public:
 		/* ----------------------------------------------Constructors----------------------------------------------- */
-		DCMotor(void) noexcept;
-
 		DCMotor(const AnalogPin& analogPin) noexcept;
 
 		DCMotor(AnalogPin&& analogPin) noexcept;

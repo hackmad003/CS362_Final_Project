@@ -1,3 +1,9 @@
+#include <cstddef>
+
+#include <Arduino.h>
+
+#include "ControlStick.hpp"
+
 void setup(void) noexcept {
   // put your setup code here, to run once:
 

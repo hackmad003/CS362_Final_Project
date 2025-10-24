@@ -18,14 +18,13 @@ namespace arduino {
 
   public:
     /* ----------------------------------------------Constructors-------------------------------------------- */
-    ControlStick(void) noexcept;
-
     ControlStick(const AnalogPin& vrxPin, const AnalogPin& vryPin, const DigitalPin& swPin) noexcept;
+    
     ControlStick(AnalogPin&& vrxPin, AnalogPin&& vryPin, DigitalPin&& swPin) noexcept;
 
     ControlStick(const ControlStick&) noexcept = default;
 
-    ConstrolStick(ControlStick&&) noexcept = default;
+    ControlStick(ControlStick&&) noexcept = default;
 
     /* -----------------------------------------------Destructor--------------------------------------------- */
     ~ControlStick() noexcept = default;
@@ -47,12 +46,13 @@ namespace arduino {
     void setVryPin(AnalogPin&& vryPin) noexcept;
 
     void setSwPin(const DigitalPin& swPin) noexcept;
+
     void setSwPim(DigitalPin&& swPin) noexcept;
     
     /* ------------------------------------------------Getters----------------------------------------------- */
-    [[nodiscard]] std::int32_t getXCoord(void) const noexcept;
+    [[nodiscard]] std::int32_t getX(void) const noexcept;
 
-    [[nodiscard]] std::int32_t getYCoord(void) const noexcept;
+    [[nodiscard]] std::int32_t getY(void) const noexcept;
 
     /* ------------------------------------------------Methods----------------------------------------------- */
     [[nodiscard]] bool isPressed(void) const noexcept;

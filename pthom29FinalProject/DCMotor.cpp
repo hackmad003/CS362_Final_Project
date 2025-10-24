@@ -4,8 +4,6 @@
 namespace arduino {
 
   /* --------------------------------------------------Constructors----------------------------------------------- */
-  DCMotor::DCMotor(void) noexcept {}
-
   DCMotor::DCMotor(const AnalogPin& analogPin) noexcept : analogPin(analogPin) {}
 
   DCMotor::DCMotor(AnalogPin&& analogPin) noexcept : analogPin(analogPin) {}
@@ -17,13 +15,13 @@ namespace arduino {
 
   // TODO
   void DCMotor::setSpeed(std::uint32_t speed) noexcept {
-      //
+    //
   }
 
   /* ----------------------------------------------------Getters-------------------------------------------------- */
   // TODO
   [[nodiscard]] std::uint32_t DCMotor::getSpeed(void) const noexcept {
-      return 0;
+    return 0;
   }
 
 } // namespace arduino
