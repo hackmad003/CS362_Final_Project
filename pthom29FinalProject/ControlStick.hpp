@@ -4,24 +4,50 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "DigitalPin.hpp"
-#include "AnalogPin.hpp"
-
+#include <Arduino.h>
+#include <RF24.h>
 
 namespace arduino {
   class ControlStick {
   private:
+    /* -------------------------------------------------Coords----------------------------------------------- */
+    struct Coords {
+      /* -----------------------------------------------Fields----------------------------------------------- */
+      std::int32_t x, y;
+
+      /* --------------------------------------------Constructors-------------------------------------------- */
+      Coords(void) noexcept;
+
+      Coords(const Coords&) noexcept = default;
+
+      Coords(Coords&&) noexcept = default;
+
+      /* ---------------------------------------------Destructor--------------------------------------------- */
+      ~Coords() noexcept = default;
+
+      /* -----------------------------------------Overloaded Operators--------------------------------------- */
+      Coords& operator=(const Coords&) noexcept = default;
+
+      Coords& operator=(Coords&&) noexcept = default;
+
+    };
+
     /* -------------------------------------------------Fields----------------------------------------------- */
-    AnalogPin vrxPin;
-    AnalogPin vryPin;
-    DigitalPin swPin;
+    static constexpr std::int32_t DEFAULT_COORD = 512, MIN_COORD = 50, MAX_COORD = 1000;
+
+    static constexpr std::uint64_t PIPE_IN = 0xE9E8F0F0E1LL;
+
+    RF24 radio;
+
+    Coords coords;
+
+    /* ------------------------------------------------Methods----------------------------------------------- */
+    void _updateCoords(void) noexcept;
 
   public:
     /* ----------------------------------------------Constructors-------------------------------------------- */
-    ControlStick(const AnalogPin& vrxPin, const AnalogPin& vryPin, const DigitalPin& swPin) noexcept;
+    ControlStick() noexcept;
     
-    ControlStick(AnalogPin&& vrxPin, AnalogPin&& vryPin, DigitalPin&& swPin) noexcept;
-
     ControlStick(const ControlStick&) noexcept = default;
 
     ControlStick(ControlStick&&) noexcept = default;
@@ -30,33 +56,14 @@ namespace arduino {
     ~ControlStick() noexcept = default;
 
     /* -------------------------------------------Overloaded Operators--------------------------------------- */
-    ControlStick& operator=(const ControlStick&) noexcept = default;
+    ControlStick& operator=(const ControlStick& rhs) noexcept = default;
 
-    ControlStick& operator=(ControlStick&&) noexcept = default;
-
-    [[nodiscard]] explicit operator bool(void) const noexcept;
-
-    /* ------------------------------------------------Setters----------------------------------------------- */
-    void setVrxPin(const AnalogPin& vrxPin) noexcept;
-
-    void setVrxPin(AnalogPin&& vrxPin) noexcept;
-
-    void setVryPin(const AnalogPin& vryPin) noexcept;
-
-    void setVryPin(AnalogPin&& vryPin) noexcept;
-
-    void setSwPin(const DigitalPin& swPin) noexcept;
-
-    void setSwPim(DigitalPin&& swPin) noexcept;
-    
-    /* ------------------------------------------------Getters----------------------------------------------- */
-    [[nodiscard]] std::int32_t getX(void) const noexcept;
-
-    [[nodiscard]] std::int32_t getY(void) const noexcept;
+    ControlStick& operator=(ControlStick&& rhs) noexcept = default;
 
     /* ------------------------------------------------Methods----------------------------------------------- */
-    [[nodiscard]] bool isPressed(void) const noexcept;
+    std::int32_t x(void) noexcept;
 
+    std::int32_t y(void) noexcept;
 
   };
 

@@ -5,7 +5,6 @@ This code was uploaded to Ahmads Arduino UNO R4 Wi-FI
 // C/C++ includes
 #include <cstddef>
 #include <cstdint>
-#include <memory>
 #include <array>
 
 // 3rd party includes
