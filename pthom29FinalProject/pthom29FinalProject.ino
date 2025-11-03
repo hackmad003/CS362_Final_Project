@@ -121,6 +121,14 @@ void loop(void) noexcept {
         //digitalWrite(IN4, HIGH);
         //analogWrite(ENA, 150);
         //analogWrite(ENB, 150);
+
+        IN[0].write(LOW);
+        IN[1].write(HIGH);
+        IN[2].write(LOW);
+        IN[3].write(HIGH);
+
+        ENA.write(150);
+        ENB.write(150);
       }
       // Left
       else if (x < 400) {
@@ -131,6 +139,14 @@ void loop(void) noexcept {
         //digitalWrite(IN4, LOW);
         //analogWrite(ENA, 150);
         //analogWrite(ENB, 150);
+
+        IN[0].write(LOW);
+        IN[1].write(HIGH);
+        IN[2].write(HIGH);
+        IN[3].write(LOW);
+
+        ENA.write(150);
+        ENB.write(150);
       }
       // Right
       else if (x > 600) {
