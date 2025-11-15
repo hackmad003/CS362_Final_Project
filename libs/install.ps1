@@ -7,7 +7,7 @@ param(
 $Source = Join-Path $PSScriptRoot $LibraryName
 
 # Destination: Documents/Arduino/libraries
-$ArduinoLibDir = Join-Path $HOME "Documents\Arduino\libraries"
+$ArduinoLibDir = Join-Path $env:OneDrive "Documents\Arduino\libraries"
 
 # Create directory if missing
 if (-Not (Test-Path $ArduinoLibDir)) {
