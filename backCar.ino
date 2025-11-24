@@ -1,0 +1,94 @@
+/*
+ * RC Car - PERIPHERAL B (Back Wheels)
+ * NOTE: PINS MUST MATCH WIRING FOR THE BACK L298N
+ */
+#include <ArduinoBLE.h>
+
+// Motor Pins (Adjust these for the back set if they are different)
+#define ENA 5
+#define IN1 2
+#define IN2 3
+#define IN3 4
+#define IN4 6
+#define ENB 9
+
+// --- BACK CAR UUIDS (Unique IDs to match Remote) ---
+BLEService backCarService("19B10000-E8F2-537E-4F6C-D104768A1215"); // Changed last digit to 5
+BLECharacteristic backCommandChar("19B10001-E8F2-537E-4F6C-D104768A1216", BLERead | BLEWrite, 4); // Changed last digit to 6
+
+struct JoystickData {
+  int16_t x;
+  int16_t y;
+};
+JoystickData receivedData;
+
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(ENA, OUTPUT); pinMode(ENB, OUTPUT);
+  pinMode(IN1, OUTPUT); pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT); pinMode(IN4, OUTPUT);
+  stopMotors();
+
+  if (!BLE.begin()) {
+    Serial.println("starting Bluetooth® Low Energy module failed!");
+    while (1);
+  }
+
+  BLE.setLocalName("BACK_CAR_R4"); // Unique local name
+  // --- ADD UNIQUE SERVICE/CHARACTERISTIC TO BLE ---
+  BLE.setAdvertisedService(backCarService);
+  backCarService.addCharacteristic(backCommandChar);
+  BLE.addService(backCarService);
+  
+  BLE.advertise();
+  Serial.println("Back Car Ready. Waiting for Remote...");
+}
+
+void loop() {
+  BLEDevice central = BLE.central();
+
+  if (central) {
+    Serial.print("Connected to Remote: ");
+    Serial.println(central.address());
+
+    while (central.connected()) {
+      // *** NOTE: Using the unique variable name here! ***
+      if (backCommandChar.written()) {
+        backCommandChar.readValue(&receivedData, sizeof(receivedData));
+        
+        Serial.print("X: "); Serial.print(receivedData.x);
+        Serial.print(" Y: "); Serial.println(receivedData.y);
+        
+        controlMotors(receivedData.x, receivedData.y);
+      }
+    }
+    
+    Serial.println("Remote Disconnected");
+    stopMotors();
+  }
+}
+
+void controlMotors(int x, int y) {
+  if (x > 450 && x < 570 && y > 450 && y < 570) {
+    stopMotors();
+    return;
+  }
+
+  if (y > 600) move(HIGH, LOW, HIGH, LOW, 150);      
+  else if (y < 400) move(LOW, HIGH, LOW, HIGH, 150);  
+  else if (x < 400) move(LOW, HIGH, HIGH, LOW, 150);  
+  else if (x > 600) move(HIGH, LOW, LOW, HIGH, 150);  
+}
+
+void move(int n1, int n2, int n3, int n4, int speed) {
+  digitalWrite(IN1, n1); digitalWrite(IN2, n2);
+  digitalWrite(IN3, n3); digitalWrite(IN4, n4);
+  analogWrite(ENA, speed); analogWrite(ENB, speed);
+}
+
+void stopMotors() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+  analogWrite(ENA, 0); analogWrite(ENB, 0);
+}
