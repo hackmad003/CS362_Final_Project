@@ -1,0 +1,118 @@
+/*
+ * Michael ELGOO UNO R3 
+ * LCD Display Controller - Arduino UNO R3
+ * Receives joystick data via Serial from Back Car
+ * Displays on TWO 16x2 I2C LCDs (License Plates)
+ */
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Two LCDs with different I2C addresses
+// Common addresses: 0x27, 0x3F (use I2C scanner if unsure)
+LiquidCrystal_I2C lcd1(0x27, 16, 2); // Front LCD
+LiquidCrystal_I2C lcd2(0x3F, 16, 2); // Back LCD
+
+struct JoystickData {
+  int16_t x;
+  int16_t y;
+};
+
+JoystickData data;
+unsigned long lastUpdate = 0;
+
+void setup() {
+  Serial.begin(9600);
+  
+  // Initialize both LCDs
+  lcd1.init();
+  lcd1.backlight();
+  lcd2.init();
+  lcd2.backlight();
+  
+  // Startup message
+  lcd1.clear();
+  lcd1.setCursor(0, 0);
+  lcd1.print("  CS362 RC CAR  ");
+  lcd1.setCursor(0, 1);
+  lcd1.print("   FRONT PLATE  ");
+  
+  lcd2.clear();
+  lcd2.setCursor(0, 0);
+  lcd2.print("  CS362 RC CAR  ");
+  lcd2.setCursor(0, 1);
+  lcd2.print("   REAR PLATE   ");
+  
+  delay(2000);
+  lcd1.clear();
+  lcd2.clear();
+}
+
+void loop() {
+  // Check if serial data available
+  if (Serial.available() >= sizeof(JoystickData)) {
+    // Read the data struct
+    Serial.readBytes((char*)&data, sizeof(JoystickData));
+    lastUpdate = millis();
+    
+    updateDisplays();
+  }
+  
+  // If no data for 2 seconds, show "WAITING"
+  if (millis() - lastUpdate > 2000) {
+    showWaitingMessage();
+    delay(500);
+  }
+}
+
+void updateDisplays() {
+  // FRONT LCD - Show direction and coordinates
+  lcd1.clear();
+  lcd1.setCursor(0, 0);
+  lcd1.print("DIR: ");
+  lcd1.print(getDirection());
+  
+  lcd1.setCursor(0, 1);
+  lcd1.print("X:");
+  lcd1.print(data.x);
+  lcd1.print(" Y:");
+  lcd1.print(data.y);
+  
+  // BACK LCD - Show license plate or status
+  lcd2.clear();
+  lcd2.setCursor(0, 0);
+  lcd2.print("  UIC-CS362-24  ");
+  lcd2.setCursor(0, 1);
+  lcd2.print("  ROBOTICS R4  ");
+}
+
+String getDirection() {
+  int x = data.x;
+  int y = data.y;
+  
+  // Deadzone
+  if (x > 450 && x < 570 && y > 450 && y < 570) {
+    return "STOP    ";
+  }
+  
+  if (y > 600) return "FORWARD ";
+  else if (y < 400) return "BACKWARD";
+  else if (x < 400) return "LEFT    ";
+  else if (x > 600) return "RIGHT   ";
+  
+  return "UNKNOWN ";
+}
+
+void showWaitingMessage() {
+  lcd1.clear();
+  lcd1.setCursor(0, 0);
+  lcd1.print("  WAITING FOR   ");
+  lcd1.setCursor(0, 1);
+  lcd1.print("    SIGNAL...   ");
+  
+  lcd2.clear();
+  lcd2.setCursor(0, 0);
+  lcd2.print("   NO REMOTE    ");
+  lcd2.setCursor(0, 1);
+  lcd2.print("   CONNECTION   ");
+}
