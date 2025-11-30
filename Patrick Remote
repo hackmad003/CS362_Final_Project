@@ -3,6 +3,20 @@
  * RC Remote - Dual BLE Connection
  * Connects to BOTH Front and Back cars via Bluetooth
 
+
+  ABSTRCT: This project implements a four-wheel drive RC car using four
+  Arduino microcontrollers with Bluetooth communication and software 
+  differential steering. Team possesses three Arduino UNO R4 Wi-Fi 
+  boards, where two manage two motors each, and one serves as the 
+  wireless remote controlling the car’s functions. 
+  The system features independent yet synchronized front and rear
+  motor control through L298N Drivers. While one ELGOO UNO R3 
+  configures (2) 16x2 LCD displays as license plates. 
+  The car circuit is powered with 18650 batteries, and the remote
+  circuit is powered by a bread board battery pack. Originality 
+  includes differential steering and an extended 14-inch chassis. (100)
+
+
   HARDWARE: 
   
 
