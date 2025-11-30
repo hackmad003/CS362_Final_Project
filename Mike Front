@@ -1,12 +1,42 @@
 /*
  * Mike Arduino UNO R4 Wifi
- * RC Car - BLE RECEIVER (PERIPHERAL A) (Front Wheels)
- * Board: Arduino UNO R4 WiFi
+ * RC Car - PERIPHERAL A (Front Wheels)
+
+  HARDWARE: 
+
+  GROUP NUMBER: 50
+
+  ORIGINALITY: 
+  Original Chassis Construct 
+  Original Motor Algorithms
+  Original Circuit Topology
+  Original Project Design
+  ETC
+
+  Ahmad Awaidah (aawai) (aawai@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE, Serial
+
+  Michael Nguyen (mnguy37) (mnguy37@uic.edu) ELGOO UNO R3
+  2 DEVICES: 2 LCD Displays
+  COMMUNICATION: Serial
+
+  Mike Vinanzaca (mvina2) (mvina2@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE
+
+  Patrick Thomas (pthom29) (pthom29@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: LED Light, Joystick
+  COMMUNICATION: BLE
+
+
+
  */
 
+// REQUIRED LIBRARIES //
 #include <ArduinoBLE.h>
 
-// Motor Pins
+// L298N MOTOR DRIVER PIN IDS //
 #define ENA 5
 #define IN1 2
 #define IN2 3
@@ -14,18 +44,27 @@
 #define IN4 6
 #define ENB 9
 
-// UUIDs (Must match the Remote)
+// FRONT ARDUINO UUIDs //
 BLEService carService("19B10000-E8F2-537E-4F6C-D104768A1214"); 
 // Characteristic to hold 2 integers (X and Y), so we need 4 bytes
 BLECharacteristic commandChar("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite, 4);
 
+
+//////////////////////////
+// JOYSTICK DATA STRUCT //
+//////////////////////////
 struct JoystickData {
   int16_t x;
   int16_t y;
 };
 
+// STRUCT OBJECT //
 JoystickData receivedData;
 
+
+////////////
+// SET UP //
+////////////
 void setup() {
   Serial.begin(9600);
   
@@ -35,7 +74,7 @@ void setup() {
   stopMotors();
 
   if (!BLE.begin()) {
-    Serial.println("starting Bluetooth® Low Energy module failed!");
+    Serial.println("starting Bluetooth Low Energy module failed");
     while (1);
   }
 
@@ -46,9 +85,13 @@ void setup() {
   
   // Start advertising so the Remote can find us
   BLE.advertise();
-  Serial.println("Bluetooth Car Ready. Waiting for Remote...");
+  Serial.println("Bluetooth Car Ready. Waiting for Remote");
 }
 
+
+//////////
+// LOOP //
+//////////
 void loop() {
   BLEDevice central = BLE.central();
 
@@ -74,6 +117,9 @@ void loop() {
   }
 }
 
+//////////////////////////
+// CONTROL FRONT MOTORS //
+//////////////////////////
 void controlFrontMotors(int x, int y) {
   // Deadzone
   if (x > 450 && x < 570 && y > 450 && y < 570) {
@@ -87,14 +133,26 @@ void controlFrontMotors(int x, int y) {
   else if (x > 600) move(HIGH, LOW, LOW, HIGH, 150);  // Right
 }
 
+
+//////////
+// MOVE //
+//////////
 void move(int n1, int n2, int n3, int n4, int speed) {
   digitalWrite(IN1, n1); digitalWrite(IN2, n2);
   digitalWrite(IN3, n3); digitalWrite(IN4, n4);
   analogWrite(ENA, speed); analogWrite(ENB, speed);
 }
 
+
+/////////////////
+// STOP MOTORS //
+/////////////////
 void stopMotors() {
   digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
   analogWrite(ENA, 0); analogWrite(ENB, 0);
 }
+
+/////////
+// EOF //
+/////////
