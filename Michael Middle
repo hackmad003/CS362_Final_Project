@@ -3,24 +3,67 @@
  * LCD Display Controller - Arduino UNO R3
  * Receives joystick data via Serial from Back Car
  * Displays on TWO 16x2 I2C LCDs (License Plates)
+
+  HARDWARE:
+
+
+
+  GROUP NUMBER: 50
+
+  ORIGINALITY: 
+  Original Chassis Construct 
+  Original Motor Algorithms
+  Original Circuit Topology
+  Original Project Design
+  ETC
+
+  Ahmad Awaidah (aawai) (aawai@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE, Serial
+
+  Michael Nguyen (mnguy37) (mnguy37@uic.edu) ELGOO UNO R3
+  2 DEVICES: 2 LCD Displays
+  COMMUNICATION: Serial
+
+  Mike Vinanzaca (mvina2) (mvina2@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE
+
+  Patrick Thomas (pthom29) (pthom29@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: LED Light, Joystick
+  COMMUNICATION: BLE
+
+
+
  */
 
+
+// REQUIRED LIBRARIES //
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
 // Two LCDs with different I2C addresses
-// Common addresses: 0x27, 0x3F (use I2C scanner if unsure)
 LiquidCrystal_I2C lcd1(0x27, 16, 2); // Front LCD
 LiquidCrystal_I2C lcd2(0x3F, 16, 2); // Back LCD
 
+//////////////////////////
+// JOYSTICK DATA STRUCT //
+//////////////////////////
 struct JoystickData {
   int16_t x;
   int16_t y;
 };
 
+// STRUCT OBJECT //
 JoystickData data;
+
+// T?F VAR //
 unsigned long lastUpdate = 0;
 
+
+////////////
+// SET UP //
+////////////
 void setup() {
   Serial.begin(9600);
   
@@ -48,6 +91,10 @@ void setup() {
   lcd2.clear();
 }
 
+
+//////////
+// LOOP //
+//////////
 void loop() {
   // Check if serial data available
   if (Serial.available() >= sizeof(JoystickData)) {
@@ -65,6 +112,9 @@ void loop() {
   }
 }
 
+/////////////////////
+// UPDATE DISPLAYS //
+/////////////////////
 void updateDisplays() {
   // FRONT LCD - Show direction and coordinates
   lcd1.clear();
@@ -86,6 +136,9 @@ void updateDisplays() {
   lcd2.print("  ROBOTICS R4  ");
 }
 
+///////////////////
+// GET DIRECTION //
+///////////////////
 String getDirection() {
   int x = data.x;
   int y = data.y;
@@ -103,6 +156,9 @@ String getDirection() {
   return "UNKNOWN ";
 }
 
+//////////////////////////
+// SHOW WAITING MESSAGE //
+//////////////////////////
 void showWaitingMessage() {
   lcd1.clear();
   lcd1.setCursor(0, 0);
@@ -116,3 +172,8 @@ void showWaitingMessage() {
   lcd2.setCursor(0, 1);
   lcd2.print("   CONNECTION   ");
 }
+
+
+/////////
+// EOF //
+/////////
