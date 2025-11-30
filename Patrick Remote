@@ -2,31 +2,76 @@
  * Patrick Arduino UNO R4 Wifi
  * RC Remote - Dual BLE Connection
  * Connects to BOTH Front and Back cars via Bluetooth
+
+  HARDWARE: 
+  
+
+
+  GROUP NUMBER: 50
+
+  ORIGINALITY: 
+  Original Chassis Construct 
+  Original Motor Algorithms
+  Original Circuit Topology
+  Original Project Design
+  ETC
+
+  Ahmad Awaidah (aawai) (aawai@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE, Serial
+
+  Michael Nguyen (mnguy37) (mnguy37@uic.edu) ELGOO UNO R3
+  2 DEVICES: 2 LCD Displays
+  COMMUNICATION: Serial
+
+  Mike Vinanzaca (mvina2) (mvina2@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: L298N Driver, 2 DC Motors
+  COMMUNICATION: BLE
+
+  Patrick Thomas (pthom29) (pthom29@uic.edu) Arduino UNO R4 Wi-Fi
+  2 DEVICES: LED Light, Joystick
+  COMMUNICATION: BLE
+
+
  */
+
+
+// REQUIRED LIBRARIES //
 #include <ArduinoBLE.h>
 
+//////////////////////////
+// JOYSTICK DATA STRUCT //
+//////////////////////////
 struct JoystickData {
   int16_t x;
   int16_t y;
 };
+
+// STRUCT OBJECT //
 JoystickData data;
 
-// FRONT CAR UUIDs
+// FRONT CAR UUIDs //
 const char* frontServiceUuid = "19B10000-E8F2-537E-4F6C-D104768A1214";
 const char* frontCharUuid = "19B10001-E8F2-537E-4F6C-D104768A1214";
 
-// BACK CAR UUIDs
+// BACK CAR UUIDs //
 const char* backServiceUuid = "19B10000-E8F2-537E-4F6C-D104768A1215";
 const char* backCharUuid = "19B10001-E8F2-537E-4F6C-D104768A1216";
 
+// UUID OBJECTS //
 BLEDevice frontCar;
 BLEDevice backCar;
 BLECharacteristic frontChar;
 BLECharacteristic backChar;
 
+// T?F VARS //
 bool frontConnected = false;
 bool backConnected = false;
 
+
+///////////
+// SETUP //
+///////////
 void setup() {
   Serial.begin(9600);
   while (!Serial) delay(10);
@@ -34,22 +79,25 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   
   if (!BLE.begin()) {
-    Serial.println("❌ BLE Failed!");
+    Serial.println(" BLE Failed!");
     while (1);
   }
   
-  Serial.println("🚗 Remote Started - Scanning for cars...");
+  Serial.println(" Remote Started - Scanning for cars");
   BLE.scan();
 }
 
+//////////
+// LOOP //
+//////////
 void loop() {
   // Try to connect to front car if not connected
   if (!frontConnected) {
     BLEDevice peripheral = BLE.available();
     if (peripheral && peripheral.localName() == "R4_RC_Car") {
-      Serial.println("🔵 Found Front Car!");
+      Serial.println(" Found Front Car");
       if (connectToFrontCar(peripheral)) {
-        Serial.println("✅ Front Car Connected!");
+        Serial.println(" Front Car Connected");
         frontConnected = true;
       }
       delay(100);
@@ -61,9 +109,9 @@ void loop() {
   if (!backConnected) {
     BLEDevice peripheral = BLE.available();
     if (peripheral && peripheral.localName() == "BACK_CAR_R4") {
-      Serial.println("🟢 Found Back Car!");
+      Serial.println(" Found Back Car");
       if (connectToBackCar(peripheral)) {
-        Serial.println("✅ Back Car Connected!");
+        Serial.println(" Back Car Connected");
         backConnected = true;
       }
       delay(100);
@@ -73,13 +121,13 @@ void loop() {
   
   // Check if connections are still alive
   if (frontConnected && !frontCar.connected()) {
-    Serial.println("⚠️ Front Car disconnected");
+    Serial.println(" Front Car disconnected");
     frontConnected = false;
     BLE.scan();
   }
   
   if (backConnected && !backCar.connected()) {
-    Serial.println("⚠️ Back Car disconnected");
+    Serial.println(" Back Car disconnected");
     backConnected = false;
     BLE.scan();
   }
@@ -101,7 +149,7 @@ void loop() {
       backChar.writeValue((byte*)&data, sizeof(data));
     }
     
-    Serial.print("📤 X: "); Serial.print(data.x);
+    Serial.print(" X: "); Serial.print(data.x);
     Serial.print(" Y: "); Serial.println(data.y);
     
     delay(50);
@@ -111,6 +159,10 @@ void loop() {
   }
 }
 
+
+//////////////////////////
+// CONNECT TO FRONT CAR //
+//////////////////////////
 bool connectToFrontCar(BLEDevice peripheral) {
   BLE.stopScan();
   
@@ -122,20 +174,24 @@ bool connectToFrontCar(BLEDevice peripheral) {
         frontCar = peripheral;
         return true;
       } else {
-        Serial.println("❌ Front characteristic not found");
+        Serial.println(" Front characteristic not found");
         peripheral.disconnect();
       }
     } else {
-      Serial.println("❌ Front attributes discovery failed");
+      Serial.println(" Front attributes discovery failed");
       peripheral.disconnect();
     }
   } else {
-    Serial.println("❌ Front connection failed");
+    Serial.println(" Front connection failed");
   }
   
   return false;
 }
 
+
+/////////////////////////
+// CONNECT TO BACK CAR //
+/////////////////////////
 bool connectToBackCar(BLEDevice peripheral) {
   BLE.stopScan();
   
@@ -147,16 +203,20 @@ bool connectToBackCar(BLEDevice peripheral) {
         backCar = peripheral;
         return true;
       } else {
-        Serial.println("❌ Back characteristic not found");
+        Serial.println(" Back characteristic not found");
         peripheral.disconnect();
       }
     } else {
-      Serial.println("❌ Back attributes discovery failed");
+      Serial.println(" Back attributes discovery failed");
       peripheral.disconnect();
     }
   } else {
-    Serial.println("❌ Back connection failed");
+    Serial.println(" Back connection failed");
   }
   
   return false;
 }
+
+/////////
+// EOF //
+/////////
